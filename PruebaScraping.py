@@ -1,5 +1,9 @@
 import requests
+<<<<<<< HEAD
 import math
+=======
+import math 
+>>>>>>> 7475fb31c54f4e8aa3cb22a253bca825b38e6710
 from bs4 import BeautifulSoup
 
 def DetectarGenero(sop):
