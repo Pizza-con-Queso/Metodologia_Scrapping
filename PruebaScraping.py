@@ -1,9 +1,5 @@
 import requests
-<<<<<<< HEAD
 import math
-=======
-import math 
->>>>>>> 7475fb31c54f4e8aa3cb22a253bca825b38e6710
 from bs4 import BeautifulSoup
 
 def DetectarGenero(sop):
@@ -44,7 +40,7 @@ def TablaPaises(sop):
         print(Lista[i][ini+1:fin])
         T.append( Lista[i][0:ini])
         T.append(int(Lista[i][ini+1:fin]))
-        LF += T
+        LF.append(T)
     print(LF)
 
 
