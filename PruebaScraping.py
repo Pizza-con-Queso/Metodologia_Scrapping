@@ -54,3 +54,59 @@ soup = str(soup)
 
 #DetectarLinks(soup)
 TablaPaises(soup)
+
+def main():
+    head_user = input("Ingrese su header:  ")
+    
+    if head_user == "t":
+        head = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36'}
+    if head_user == "v":
+        head = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393'}
+    else:
+        head = {'User-Agent': head_user}
+    
+    page = requests.get('https://research.com/scientists-rankings/computer-science', headers=head)
+
+    if verificacion_HeadUser(page) == 1:
+        menu()
+    else:
+        print("El head User no es correcto. Intente nuevamente")
+
+def verificacion_HeadUser(A):
+    if A == 200:
+        return 1
+    else:
+        return 0
+
+def menu():
+    intrucciones()
+    opcion = int(input("\n\nIngrese la opción que desea generar:\t"))
+
+    while(opcion != 0):
+        if opcion == 1:
+            DetectarGenero(soup)
+        if opcion == 2:
+            TablaPaises(soup)
+        if opcion == 3:
+            print("Hola")
+        if opcion == 4:
+            print("Hola")
+        if opcion == 5:
+            print("Hola")
+        if opcion == 6:
+            print("Hola")
+        else:
+            print("Hola")
+        
+        intrucciones()
+
+        opcion = int(input("\n\nIngrese la opción que desea generar:\t"))
+        
+def intrucciones():
+    print("1) Identificar sexo de científicos")
+    print("2) Cantidad de científicos por país")
+    print("3) Cantidad de Instituciones de investigación por país")
+    print("4) Coautores")
+    print("5) Sub-diciplinas con más artículos publicados")
+    print("6) Cantidad de Articulos citados por sub-diciplina")
+    print("Salir (0)")
