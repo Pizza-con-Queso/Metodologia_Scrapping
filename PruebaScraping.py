@@ -126,7 +126,7 @@ def intrucciones():
     print("5) Sub-diciplinas con más artículos publicados")
     print("6) Cantidad de Articulos citados por sub-diciplina")
     print("Salir (0)")
-=======
+
 #TablaPaises(soup)
 DetectarLinksCientificos(soup)
 >>>>>>> c121031085859a6224a5c1db8badf89b60cbacf0
