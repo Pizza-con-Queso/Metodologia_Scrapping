@@ -29,7 +29,8 @@ def DetectarLinksCientificos(sop):
         if ini != -1:
             T.append(sop[ini+6:fin]+"/") 
             ini = fin
-    print(T)
+    #print(T)
+    return T
 
 def TablaPaises(sop):
     ini = sop.find("All countries")
@@ -54,7 +55,7 @@ def TablaPaises(sop):
         T.append(int(Lista[i][ini+1:fin]))
         T.append(math.ceil(int(Lista[i][ini+1:fin])/100))
         LF.append(T)
-    print(LF)
+    #print(LF)
     return LF
 
 
