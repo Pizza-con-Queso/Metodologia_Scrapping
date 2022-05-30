@@ -64,15 +64,15 @@ def DetectarCantidadArticulosPorPais(head, TabCien):
         cant = ObtenerCantidadDeArticulos(soap[306])
         pos = BuscarSeccion(soap, "He most often published in these fields")
         if pos != -1:
+            subs = []
             subs = ObtenerSubdiciplinas(soap, pos)
             subs[0].append(math.floor((subs[0][1]/100)*cant))
             subs[1].append(math.floor((subs[1][1]/100)*cant))
             subs[2].append(math.floor((subs[2][1]/100)*cant))
-            AgregarSubdiciplina(Res, subs[0])
-            AgregarSubdiciplina(Res, subs[1])
-            AgregarSubdiciplina(Res, subs[2])
-    Res = sorted(Res, key=operator.itemgetter(1))
-    Res.reverse()
+            for h in range(0,3):
+                AgregarSubdiciplina(Res, subs[h])
+
+    Res = sorted(Res, key=operator.itemgetter(1), reverse = True)
     return Res
 #Retorna tabla de subdiciplinas [[Nombre, cantidad articulos]...]
 
@@ -263,6 +263,7 @@ def menu(head):
             print("Saliendo")
         
 def intrucciones():
+    print("\n\n")
     print("1) Identificar sexo de científicos de un pais")
     print("2) Cantidad de científicos por país")
     print("3) Cantidad de Instituciones de investigación por país")
