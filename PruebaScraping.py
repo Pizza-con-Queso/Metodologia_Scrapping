@@ -66,10 +66,8 @@ def DetectarCantidadArticulosPorPais(head, TabCien):
         if pos != -1:
             subs = []
             subs = ObtenerSubdiciplinas(soap, pos)
-            subs[0].append(math.floor((subs[0][1]/100)*cant))
-            subs[1].append(math.floor((subs[1][1]/100)*cant))
-            subs[2].append(math.floor((subs[2][1]/100)*cant))
             for h in range(0,3):
+                subs[h].append(math.floor((subs[h][1]/100)*cant))
                 AgregarSubdiciplina(Res, subs[h])
 
     Res = sorted(Res, key=operator.itemgetter(1), reverse = True)
