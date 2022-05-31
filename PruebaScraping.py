@@ -8,6 +8,14 @@ from bs4 import BeautifulSoup
 import sys
 import operator
 
+import os
+
+def clear():
+    if os.name == "nt":
+        os.system("cls")
+    else:
+        os.system("clear")
+
 def progressbar(it, prefix="", size=60, file=sys.stdout):
     count = len(it)
     def show(j):
@@ -22,6 +30,44 @@ def progressbar(it, prefix="", size=60, file=sys.stdout):
         file.write("\n")
     file.flush()
 
+def PrintGeneroPais(Res):
+    print("Mujeres = ", Res[0], "\nHombres = ", Res[1], "\nNo detectado = ", Res[2])
+
+def PrintArticulosPais(Res):
+    print ("{:<40} {:<7}".format('Nombre','Cantidad articulos'))
+    for i in Res:
+        print ("{:<40} {:<7}".format(i[0], i[1]))
+
+def DetectarPorPais(head, fun_Res, fun_Print):
+    link = 'https://research.com/scientists-rankings/computer-science'
+    page = requests.get(link, headers=head)
+    soap = BeautifulSoup(page.text, 'html.parser')
+    soap = str(soap)
+    
+    TabPai = TablaPaises(soap)
+    print("Listado paises:")
+    for i in range(len(TabPai)):
+        print('\t',i+1,'-', TabPai[i][1])
+        
+    Pais = input('Ingrese el numero del pais a buscar: ')
+    Pais = int(Pais)
+    print(TabPai[Pais-1][1], " seleccionado")
+
+    Lim = input('Ingrese el limite de resultados(maximo '+ str(TabPai[Pais-1][2])+'): ')
+    Lim = int(Lim)
+    
+    TabCien = []
+    for i in range(math.ceil(Lim/100)):
+        page = requests.get(link+'/'+TabPai[Pais-1][0]+'?page='+str(i+1), headers=head)
+        soap = BeautifulSoup(page.text, 'html.parser')
+        soap = str(soap)
+        TabCien += DetectarLinksCientificos(soap)
+            
+    TabCien = TabCien[0:Lim]
+    
+    Res = fun_Res(head, TabCien)
+
+    fun_Print(Res)
 
 def ObtenerCantidadDeArticulos(sop):
     div = sop.split('\n')
@@ -58,6 +104,7 @@ def AgregarSubdiciplina(LT, N):
 def DetectarCantidadArticulosPorPais(head, TabCien):
     Res = []
 
+    clear()
     for j in progressbar(range(len(TabCien)), "Calculando: ", 40):
         page = requests.get(TabCien[j], headers=head)
         soap = page.text.split('\n')
@@ -69,50 +116,11 @@ def DetectarCantidadArticulosPorPais(head, TabCien):
             for h in range(0,3):
                 subs[h].append(math.floor((subs[h][1]/100)*cant))
                 AgregarSubdiciplina(Res, subs[h])
+        clear()
 
     Res = sorted(Res, key=operator.itemgetter(1), reverse = True)
     return Res
 #Retorna tabla de subdiciplinas [[Nombre, cantidad articulos]...]
-
-def DetectarCantidadArticulosPais(head):
-    link = 'https://research.com/scientists-rankings/computer-science'
-    page = requests.get(link, headers=head)
-    soap = BeautifulSoup(page.text, 'html.parser')
-    soap = str(soap)
-    
-    TabPai = TablaPaises(soap)
-    print("Listado paises:")
-    for i in range(len(TabPai)):
-        print('\t',i+1,'-', TabPai[i][1])
-        
-    Pais = input('Ingrese el numero del pais a buscar: ')
-    Pais = int(Pais)
-    print(TabPai[Pais-1][1], " seleccionado")
-
-    Lim = input('Ingrese el limite de resultados(maximo '+ str(TabPai[Pais-1][2])+'): ')
-    Lim = int(Lim)
-    
-    TabCien = []
-    for i in range(math.ceil(Lim/100)):
-        page = requests.get(link+'/'+TabPai[Pais-1][0]+'?page='+str(i+1), headers=head)
-        soap = BeautifulSoup(page.text, 'html.parser')
-        soap = str(soap)
-        TabCien += DetectarLinksCientificos(soap)
-            
-    TabCien = TabCien[0:Lim]
-    
-    Res = DetectarCantidadArticulosPorPais(head, TabCien)
-
-
-    print ("{:<40} {:<7}".format('Nombre','Cantidad articulos'))
-
-    for i in Res:
-        print ("{:<40} {:<7}".format(i[0], i[1]))
-
-
-
-
-
 
 def DetectarGenero(sop):
     ini = sop.find("What is")
@@ -127,51 +135,14 @@ def DetectarGenero(sop):
 def DetectarGeneroPorPais(head, TabCien):
     Res = [0, 0, 0]
     
-    for j in range(len(TabCien)):
-        t1 = time.time()
+    clear()
+    for j in progressbar(range(len(TabCien)), "Calculando: ", 40):
         page = requests.get(TabCien[j], headers=head)
-        t2 = time.time()
-        print("Get = ", t2-t1)
-        #t1 = time.time()
-        #soap = BeautifulSoup(page.text, 'html.parser')
-        #t2 = time.time()
-        #print("soup = ", t2-t1)
-        #soap = str(soap)
         soap = page.text
         Res[DetectarGenero(soap)] += 1
+        clear()
     return Res
 #Retorna tabla de generos [M, H, N]
-
-def DetectarGeneroPais(head):
-    link = 'https://research.com/scientists-rankings/computer-science'
-    page = requests.get(link, headers=head)
-    soap = BeautifulSoup(page.text, 'html.parser')
-    soap = str(soap)
-    
-    TabPai = TablaPaises(soap)
-    print("Listado paises:")
-    for i in range(len(TabPai)):
-        print('\t',i+1,'-', TabPai[i][1])
-        
-    Pais = input('Ingrese el numero del pais a buscar: ')
-    Pais = int(Pais)
-    print(TabPai[Pais-1][1], " seleccionado")
-
-    Lim = input('Ingrese el limite de resultados(maximo '+ str(TabPai[Pais-1][2])+'): ')
-    Lim = int(Lim)
-    
-    TabCien = []
-    for i in range(math.ceil(Lim/100)):
-        print(i+1)
-        page = requests.get(link+'/'+TabPai[Pais-1][0]+'?page='+str(i+1), headers=head)
-        soap = BeautifulSoup(page.text, 'html.parser')
-        soap = str(soap)
-        TabCien += DetectarLinksCientificos(soap)
-            
-    TabCien = TabCien[0:Lim]
-    
-    Res = DetectarGeneroPorPais(head, TabCien)
-    print("Mujeres = ", Res[0], "\nHombres = ", Res[1], "\nNo detectado = ", Res[2])
 
 def TablaPaises(sop):
     ini = sop.find("All countries")
@@ -192,7 +163,7 @@ def TablaPaises(sop):
         ini = Lista[i].find("(")
         fin = Lista[i].find(")")
         T.append(L2[i])
-        T.append( Lista[i][0:ini-1])
+        T.append(Lista[i][0:ini-1])
         T.append(int(Lista[i][ini+1:fin]))
         T.append(math.ceil(int(Lista[i][ini+1:fin])/100))
         LF.append(T)
@@ -213,7 +184,6 @@ def DetectarLinksCientificos(sop):
         if ini != -1:
             T.append(sop[ini+6:fin]+"/") 
             ini = fin
-    #print(T)
     return T
 
 def main():
@@ -241,21 +211,18 @@ def verificacion_HeadUser(A):
 
 def menu(head):
     opcion = 1
-    while(opcion > 0 and opcion <= 6):
+    while(opcion > 0 and opcion <= 5):
         intrucciones()
         opcion = int(input("\n\nIngrese la opción que desea generar:\t"))
         if opcion == 1:
-            DetectarGeneroPais(head)
+            DetectarPorPais(head, DetectarGeneroPorPais, PrintGeneroPais)
         elif opcion == 2:
             print("Hola")
-            TablaPaises(soup)
         elif opcion == 3:
             print("Hola")
         elif opcion == 4:
-            print("Hola")
+            DetectarPorPais(head, DetectarCantidadArticulosPorPais, PrintArticulosPais)
         elif opcion == 5:
-            DetectarCantidadArticulosPais(head)
-        elif opcion == 6:
             print("Hola")
         else:
             print("Saliendo")
@@ -263,11 +230,10 @@ def menu(head):
 def intrucciones():
     print("\n\n")
     print("1) Identificar sexo de científicos de un pais")
-    print("2) Cantidad de científicos por país")
-    print("3) Cantidad de Instituciones de investigación por país")
-    print("4) Coautores")
-    print("5) Sub-diciplinas con más artículos publicados")
-    print("6) Cantidad de Articulos citados por sub-diciplina")
+    print("2) Cantidad de Instituciones de investigación por país")
+    print("3) Coautores")
+    print("4) Sub-diciplinas con más artículos publicados")
+    print("5) Cantidad de Articulos citados por sub-diciplina")
     print("Salir (0)")
 
 
