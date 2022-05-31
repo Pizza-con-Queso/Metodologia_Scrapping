@@ -95,7 +95,129 @@ def BuscarSeccion(sop, text):
     return -1
 
 def AgregarSubdiciplina(LT, N):
+<<<<<<< HEAD
     for i in LT:ountries")
+=======
+    for i in LT:
+        if i[0] == N[0]:
+            i[1] += N[2]
+            return
+    LT.append([N[0], N[2]])
+
+def DetectarCantidadArticulosPorPais(head, TabCien):
+    Res = []
+
+    for j in progressbar(range(len(TabCien)), "Calculando: ", 40):
+        page = requests.get(TabCien[j], headers=head)
+        soap = page.text.split('\n')
+        cant = ObtenerCantidadDeArticulos(soap[306])
+        pos = BuscarSeccion(soap, "He most often published in these fields")
+        if pos != -1:
+            subs = []
+            subs = ObtenerSubdiciplinas(soap, pos)
+            for h in range(0,3):
+                subs[h].append(math.floor((subs[h][1]/100)*cant))
+                AgregarSubdiciplina(Res, subs[h])
+
+    Res = sorted(Res, key=operator.itemgetter(1), reverse = True)
+    return Res
+#Retorna tabla de subdiciplinas [[Nombre, cantidad articulos]...]
+
+def DetectarCantidadArticulosPais(head):
+    link = 'https://research.com/scientists-rankings/computer-science'
+    page = requests.get(link, headers=head)
+    soap = BeautifulSoup(page.text, 'html.parser')
+    soap = str(soap)
+    
+    TabPai = TablaPaises(soap)
+    print("Listado paises:")
+    for i in range(len(TabPai)):
+        print('\t',i+1,'-', TabPai[i][1])
+        
+    Pais = input('Ingrese el numero del pais a buscar: ')
+    Pais = int(Pais)
+    print(TabPai[Pais-1][1], " seleccionado")
+
+    Lim = input('Ingrese el limite de resultados(maximo '+ str(TabPai[Pais-1][2])+'): ')
+    Lim = int(Lim)
+    
+    TabCien = []
+    for i in range(math.ceil(Lim/100)):
+        page = requests.get(link+'/'+TabPai[Pais-1][0]+'?page='+str(i+1), headers=head)
+        soap = BeautifulSoup(page.text, 'html.parser')
+        soap = str(soap)
+        TabCien += DetectarLinksCientificos(soap)
+            
+    TabCien = TabCien[0:Lim]
+    
+    Res = DetectarCantidadArticulosPorPais(head, TabCien)
+
+
+    print ("{:<40} {:<7}".format('Nombre','Cantidad articulos'))
+
+    for i in Res:
+        print ("{:<40} {:<7}".format(i[0], i[1]))
+
+
+
+
+
+
+def DetectarGenero(sop):
+    ini = sop.find("What is")
+    fin = sop.find("best known for?")
+    if (sop.find("she", ini, fin) > 0):
+        return 0
+    elif (sop.find("he", ini, fin) > 0):
+        return 1
+    else:
+        return 2
+
+def DetectarGeneroPorPais(head, TabCien):
+    Res = [0, 0, 0]
+    
+    for j in range(len(TabCien)):
+        t1 = time.time()
+        page = requests.get(TabCien[j], headers=head)
+        t2 = time.time()
+        print("Get = ", t2 - t1)
+        soap = page.text
+        Res[DetectarGenero(soap)] += 1
+    return Res
+#Retorna tabla de generos [M, H, N]
+
+def DetectarGeneroPais(head):
+    link = 'https://research.com/scientists-rankings/computer-science'
+    page = requests.get(link, headers=head)
+    soap = BeautifulSoup(page.text, 'html.parser')
+    soap = str(soap)
+    
+    TabPai = TablaPaises(soap)
+    print("Listado paises:")
+    for i in range(len(TabPai)):
+        print('\t',i+1,'-', TabPai[i][1])
+        
+    Pais = int(input('Ingrese el numero del pais a buscar: '))
+    print(TabPai[Pais-1][1], " seleccionado")
+
+    Lim = int(input('Ingrese el limite de resultados(maximo '+ str(TabPai[Pais-1][2])+'): '))
+    
+    TabCien = []
+    for i in range(math.ceil(Lim/100)):
+        print(i+1)
+        page = requests.get(link+'/'+TabPai[Pais-1][0]+'?page='+str(i+1), headers=head)
+        soap = BeautifulSoup(page.text, 'html.parser')
+        soap = str(soap)
+        TabCien += DetectarLinksCientificos(soap)
+            
+    TabCien = TabCien[0:Lim]
+    
+    Res = DetectarGeneroPorPais(head, TabCien)
+    print("Mujeres = ", Res[0], "\nHombres = ", Res[1], "\nNo detectado = ", Res[2])
+
+def TablaPaises(sop):
+    ini = sop.find("All countries")
+>>>>>>> edc86a88ac3f108d59aa45f96a7cb500f3e32b4e
     fin = 0
     final = sop.find("/select", ini)
     Lista = []
@@ -167,6 +289,7 @@ def menu(head):
         if opcion == 1:
             DetectarPorPais(head, DetectarGeneroPorPais, PrintGeneroPais)
         elif opcion == 2:
+            #TablaPaises()
             print("Hola")
         elif opcion == 3:
             print("Hola")
