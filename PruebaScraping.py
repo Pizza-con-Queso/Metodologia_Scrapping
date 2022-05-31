@@ -38,6 +38,11 @@ def PrintArticulosPais(Res):
     for i in Res:
         print ("{:<40} {:<7}".format(i[0], i[1]))
 
+def PrintArticulosCitas(Res):
+    print ("{:<70} {:<10}".format('Nombre articulo','Cantidad citas'))
+    for i in Res:
+        print ("{:<70} {:<10}".format(i[0], i[1]))
+
 def DetectarPorPais(head, fun_Res, fun_Print):
     link = 'https://research.com/scientists-rankings/computer-science'
     page = requests.get(link, headers=head)
@@ -115,6 +120,28 @@ def DetectarCantidadArticulosPorPais(head, TabCien):
             for h in range(0,3):
                 subs[h].append(math.floor((subs[h][1]/100)*cant))
                 AgregarSubdiciplina(Res, subs[h])
+        clear()
+    Res = sorted(Res, key=operator.itemgetter(1), reverse = True)
+    return Res
+#Retorna tabla de subdiciplinas [[Nombre, cantidad articulos]...]
+
+def ObtenerTablaArticulosCitas(head, TabCien):
+    Res = []
+    clear()
+    for j in progressbar(range(len(TabCien)), "Calculando: ", 40):
+        page = requests.get(TabCien[j], headers=head)
+        soap = page.text.split('\n')
+        pos = BuscarSeccion(soap, "Top Publications")
+        soap = soap[pos+1:]
+        pos = BuscarSeccion(soap, "Top Publications")
+        if pos != -1:
+            pos += 3
+            for i in range(10):
+                ini = soap[pos+1].find('>')
+                fin = soap[pos+1][2:].find('<')
+                tmp = [soap[pos+1][ini+1:fin+2], int(soap[pos+8][:soap[pos+8].find(' ')])]
+                Res.append(tmp)
+                pos += 10
         clear()
     Res = sorted(Res, key=operator.itemgetter(1), reverse = True)
     return Res
@@ -220,7 +247,7 @@ def menu(head):
         elif opcion == 4:
             DetectarPorPais(head, DetectarCantidadArticulosPorPais, PrintArticulosPais)
         elif opcion == 5:
-            print("Hola")
+            DetectarPorPais(head, ObtenerTablaArticulosCitas, PrintArticulosCitas)
         else:
             print("Saliendo")
         
