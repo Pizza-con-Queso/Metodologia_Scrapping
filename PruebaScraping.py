@@ -42,7 +42,17 @@ def PrintArticulosCitas(Res):
     print ("{:<70} {:<10}".format('Nombre articulo','Cantidad citas'))
     for i in Res:
         print ("{:<70} {:<10}".format(i[0], i[1]))
+        
+def PrintInstituciones(Res):
+    print ("{:<50} {:<10}".format('Nombre institucion','Cantidad cientificos'))
+    for i in Res:
+        print ("{:<50} {:<10}".format(i[0], i[1]))
 
+def PrintCoAutores(Res):
+    print ("{:<50} {:<10}".format('Nombre','Cantidad co-autorias'))
+    for i in Res:
+        print ("{:<50} {:<10}".format(i[0], i[1]))
+        
 def DetectarPorPais(head, fun_Res, fun_Print):
     link = 'https://research.com/scientists-rankings/computer-science'
     page = requests.get(link, headers=head)
@@ -147,6 +157,35 @@ def ObtenerTablaArticulosCitas(head, TabCien):
     return Res
 #Retorna tabla de subdiciplinas [[Nombre, cantidad articulos]...]
 
+def ObtenerInstituciones(head, TabCien):
+    Res = []
+    clear()
+    for j in progressbar(range(len(TabCien)), "Calculando: ", 40):
+        page = requests.get(TabCien[j], headers=head)
+        soap = page.text.split('\n')
+        AgregarSubdiciplina(Res, [soap[269], None, 1])
+        clear()
+    Res = sorted(Res, key=operator.itemgetter(1), reverse = True)
+    return Res
+#Retorna tabla de subdiciplinas [[Nombre, cantidad articulos]...]
+
+def ObtenerTablaCoAutores(head, TabCien):
+    Res = []
+    clear()
+    for j in progressbar(range(len(TabCien)), "Calculando: ", 40):
+        page = requests.get(TabCien[j], headers=head)
+        soap = page.text.split('\n')
+        pos = BuscarSeccion(soap, "Co-Authors")
+        if pos != -1:
+            pos += 1
+            for i in range(10):
+                AgregarSubdiciplina(Res, [soap[pos+4], None, 1])
+                pos += 9
+        clear()
+    Res = sorted(Res, key=operator.itemgetter(1), reverse = True)
+    return Res
+#Retorna tabla de subdiciplinas [[Nombre, cantidad articulos]...]
+
 def DetectarGenero(sop):
     ini = sop.find("What is")
     fin = sop.find("best known for?")
@@ -241,9 +280,9 @@ def menu(head):
         if opcion == 1:
             DetectarPorPais(head, DetectarGeneroPorPais, PrintGeneroPais)
         elif opcion == 2:
-            print("Hola")
+            DetectarPorPais(head, ObtenerInstituciones, PrintInstituciones)
         elif opcion == 3:
-            print("Hola")
+            DetectarPorPais(head, ObtenerTablaCoAutores, PrintCoAutores)
         elif opcion == 4:
             DetectarPorPais(head, DetectarCantidadArticulosPorPais, PrintArticulosPais)
         elif opcion == 5:
