@@ -131,12 +131,7 @@ def DetectarGeneroPorPais(head, TabCien):
         t1 = time.time()
         page = requests.get(TabCien[j], headers=head)
         t2 = time.time()
-        print("Get = ", t2-t1)
-        #t1 = time.time()
-        #soap = BeautifulSoup(page.text, 'html.parser')
-        #t2 = time.time()
-        #print("soup = ", t2-t1)
-        #soap = str(soap)
+        print("Get = ", t2 - t1)
         soap = page.text
         Res[DetectarGenero(soap)] += 1
     return Res
@@ -153,12 +148,10 @@ def DetectarGeneroPais(head):
     for i in range(len(TabPai)):
         print('\t',i+1,'-', TabPai[i][1])
         
-    Pais = input('Ingrese el numero del pais a buscar: ')
-    Pais = int(Pais)
+    Pais = int(input('Ingrese el numero del pais a buscar: '))
     print(TabPai[Pais-1][1], " seleccionado")
 
-    Lim = input('Ingrese el limite de resultados(maximo '+ str(TabPai[Pais-1][2])+'): ')
-    Lim = int(Lim)
+    Lim = int(input('Ingrese el limite de resultados(maximo '+ str(TabPai[Pais-1][2])+'): '))
     
     TabCien = []
     for i in range(math.ceil(Lim/100)):
@@ -192,7 +185,7 @@ def TablaPaises(sop):
         ini = Lista[i].find("(")
         fin = Lista[i].find(")")
         T.append(L2[i])
-        T.append( Lista[i][0:ini-1])
+        T.append(Lista[i][0:ini-1])
         T.append(int(Lista[i][ini+1:fin]))
         T.append(math.ceil(int(Lista[i][ini+1:fin])/100))
         LF.append(T)
@@ -213,7 +206,6 @@ def DetectarLinksCientificos(sop):
         if ini != -1:
             T.append(sop[ini+6:fin]+"/") 
             ini = fin
-    #print(T)
     return T
 
 def main():
