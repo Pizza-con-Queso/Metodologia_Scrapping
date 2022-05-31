@@ -239,8 +239,8 @@ def menu(head):
         if opcion == 1:
             DetectarGeneroPais(head)
         elif opcion == 2:
+            #TablaPaises()
             print("Hola")
-            TablaPaises(soup)
         elif opcion == 3:
             print("Hola")
         elif opcion == 4:
