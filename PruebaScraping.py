@@ -138,7 +138,7 @@ def DetectarCantidadArticulosPorPais(head, TabCien):
         clear()
     Res = sorted(Res, key=operator.itemgetter(1), reverse = True)
     return Res
-#Retorna tabla de subdiciplinas [[Nombre, cantidad articulos]...]
+#Retorna tabla de articulos [[Nombre, cantidad articulos]...]
 
 def ObtenerTablaArticulosCitas(head, TabCien):
     Res = []
@@ -172,7 +172,7 @@ def ObtenerInstituciones(head, TabCien):
         clear()
     Res = sorted(Res, key=operator.itemgetter(1), reverse = True)
     return Res
-#Retorna tabla de subdiciplinas [[Nombre, cantidad articulos]...]
+#Retorna tabla de instituciones [[Nombre, cantidad cientificos]...]
 
 def ObtenerTablaCoAutores(head, TabCien):
     Res = []
@@ -189,7 +189,7 @@ def ObtenerTablaCoAutores(head, TabCien):
         clear()
     Res = sorted(Res, key=operator.itemgetter(1), reverse = True)
     return Res
-#Retorna tabla de subdiciplinas [[Nombre, cantidad articulos]...]
+#Retorna tabla de coautores [[Nombre, cantidad repeticiones]...]
 
 def DetectarGenero(sop):
     ini = sop.find("What is")
@@ -255,14 +255,7 @@ def DetectarLinksCientificos(sop):
     return T
 
 def main():
-    head_user = input("Ingrese su header:  ")
-    
-    if head_user == 't':
-        head = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36'}
-    elif head_user == 'v':
-        head = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393'}
-    else:
-        head = {'User-Agent': head_user}
+    head = {'User-Agent': '5'}
     
     page = requests.get('https://research.com/scientists-rankings/computer-science', headers=head)
 
