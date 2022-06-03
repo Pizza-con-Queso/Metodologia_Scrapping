@@ -3,12 +3,17 @@ import math
 
 import time
 
+from colorama import init
+from termcolor import colored
+
 from bs4 import BeautifulSoup
 
 import sys
 import operator
 
 import os
+
+init()
 
 def clear():
     if os.name == "nt":
@@ -31,27 +36,27 @@ def progressbar(it, prefix="", size=60, file=sys.stdout):
     file.flush()
 
 def PrintGeneroPais(Res):
-    print("Mujeres = ", Res[0], "\nHombres = ", Res[1], "\nNo detectado = ", Res[2])
+    print(colored("Mujeres = ", 'blue'), Res[0], colored("\nHombres = ", 'magenta'), Res[1], colored("\nNo detectado = ", 'yellow'), Res[2])
 
 def PrintArticulosPais(Res):
     print ("{:<40} {:<7}".format('Nombre','Cantidad articulos'))
     for i in Res:
-        print ("{:<40} {:<7}".format(i[0], i[1]))
+        print ("{:<40} {:<7}".format(colored(i[0], 'green'), colored(i[1], 'cyan')))
 
 def PrintArticulosCitas(Res):
     print ("{:<70} {:<10}".format('Nombre articulo','Cantidad citas'))
     for i in Res:
-        print ("{:<70} {:<10}".format(i[0], i[1]))
+        print ("{:<70} {:<10}".format(colored(i[0], 'green'), colored(i[1], 'cyan')))
         
 def PrintInstituciones(Res):
     print ("{:<50} {:<10}".format('Nombre institucion','Cantidad cientificos'))
     for i in Res:
-        print ("{:<50} {:<10}".format(i[0], i[1]))
+        print ("{:<50} {:<10}".format(colored(i[0], 'green'), colored(i[1], 'cyan')))
 
 def PrintCoAutores(Res):
     print ("{:<50} {:<10}".format('Nombre','Cantidad co-autorias'))
     for i in Res:
-        print ("{:<50} {:<10}".format(i[0], i[1]))
+        print ("{:<50} {:<10}".format(colored(i[0], 'green'), colored(i[1], 'cyan')))
         
 def DetectarPorPais(head, fun_Res, fun_Print):
     link = 'https://research.com/scientists-rankings/computer-science'
@@ -70,8 +75,6 @@ def DetectarPorPais(head, fun_Res, fun_Print):
 
     Lim = input('Ingrese el limite de resultados(maximo '+ str(TabPai[Pais-1][2])+'): ')
     Lim = int(Lim)
-    
-    Lim = min(Lim, TabPai[Pais-1][2])
     
     TabCien = []
     for i in range(math.ceil(Lim/100)):
@@ -152,8 +155,7 @@ def ObtenerTablaArticulosCitas(head, TabCien):
                 ini = soap[pos+1].find('>')
                 fin = soap[pos+1][2:].find('<')
                 tmp = [soap[pos+1][ini+1:fin+2], int(soap[pos+8][:soap[pos+8].find(' ')])]
-                if tmp not in Res:
-                    Res.append(tmp)
+                Res.append(tmp)
                 pos += 10
         clear()
     Res = sorted(Res, key=operator.itemgetter(1), reverse = True)
