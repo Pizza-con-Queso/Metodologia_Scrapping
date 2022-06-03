@@ -1,2 +1,8 @@
 requests
 bs4
+colorama
+time
+operator
+time
+math
+os
