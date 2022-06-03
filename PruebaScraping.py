@@ -71,6 +71,8 @@ def DetectarPorPais(head, fun_Res, fun_Print):
     Lim = input('Ingrese el limite de resultados(maximo '+ str(TabPai[Pais-1][2])+'): ')
     Lim = int(Lim)
     
+    Lim = min(Lim, TabPai[Pais-1][2])
+    
     TabCien = []
     for i in range(math.ceil(Lim/100)):
         page = requests.get(link+'/'+TabPai[Pais-1][0]+'?page='+str(i+1), headers=head)
@@ -150,7 +152,8 @@ def ObtenerTablaArticulosCitas(head, TabCien):
                 ini = soap[pos+1].find('>')
                 fin = soap[pos+1][2:].find('<')
                 tmp = [soap[pos+1][ini+1:fin+2], int(soap[pos+8][:soap[pos+8].find(' ')])]
-                Res.append(tmp)
+                if tmp not in Res:
+                    Res.append(tmp)
                 pos += 10
         clear()
     Res = sorted(Res, key=operator.itemgetter(1), reverse = True)
