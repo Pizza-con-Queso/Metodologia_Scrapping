@@ -47,6 +47,11 @@ def PrintArticulosCitas(Res):
     print ("{:<70} {:<10}".format('Nombre articulo','Cantidad citas'))
     for i in Res:
         print ("{:<70} {:<10}".format(colored(i[0], 'green'), colored(i[1], 'cyan')))
+
+def PrintArticulosSubDiciplinas(Res):
+    print ("{:<70} {:<10} {:<10} {:<10}".format('Nombre articulo','Sub diciplina 1','Sub diciplina 2','Sub diciplina 3'))
+    for i in Res:
+        print ("{:<70} {:<10} {:<10} {:<10}".format(colored(i[0], 'green'), colored(i[1][0], 'cyan'), colored(i[1][1], 'green'), colored(i[1][2], 'cyan')))
         
 def PrintInstituciones(Res):
     print ("{:<50} {:<10}".format('Nombre institucion','Cantidad cientificos'))
@@ -120,6 +125,38 @@ def AgregarSubdiciplina(LT, N):
             i[1] += N[2]
             return
     LT.append([N[0], N[2]])
+
+def DetectarArticulosPorPosibleSubDiciplina(head, TabCien):
+    Res = []
+    clear()
+    for j in progressbar(range(len(TabCien)), "Calculando: ", 40):
+        page = requests.get(TabCien[j], headers=head)
+        soap = page.text.split('\n')
+        pos = BuscarSeccion(soap, " most popular works were:")
+        if pos != -1:
+            p1 = pos+2
+            Art = []
+            for i in range(3):
+                ini = soap[p1+i].find('>')
+                fin = soap[p1+i].find('(')
+                Art.append(soap[p1+i][ini+1:fin])
+
+
+        pos = BuscarSeccion(soap, "In his most recent research, the most cited papers focused on:")
+        if pos != -1:
+            p1 = pos+2
+            Sub = []
+            for i in range(3):
+                ini = soap[p1+i].find('>')
+                fin = soap[p1+i][ini:].find('<')
+                Sub.append(soap[p1+i][ini+1:fin+3])
+            
+            for i in range(3):
+                Res.append([Art[i], Sub])
+        clear()
+    Res = sorted(Res, key=operator.itemgetter(1), reverse = True)
+    return Res
+#Retorna tabla de articulos [[Nombre, cantidad articulos]...]
 
 def DetectarCantidadArticulosPorPais(head, TabCien):
     Res = []
@@ -285,6 +322,8 @@ def menu(head):
             DetectarPorPais(head, DetectarCantidadArticulosPorPais, PrintArticulosPais)
         elif opcion == 5:
             DetectarPorPais(head, ObtenerTablaArticulosCitas, PrintArticulosCitas)
+        elif opcion == 6:
+            DetectarPorPais(head, DetectarArticulosPorPosibleSubDiciplina, PrintArticulosSubDiciplinas)
         else:
             print("Saliendo")
         
@@ -295,6 +334,7 @@ def intrucciones():
     print("3) Coautores")
     print("4) Sub-diciplinas con más artículos publicados")
     print("5) Cantidad de Articulos citados por sub-diciplina")
+    print("6) Cantidad de Articulos por posible sub-diciplina")
     print("Salir (0)")
 
 

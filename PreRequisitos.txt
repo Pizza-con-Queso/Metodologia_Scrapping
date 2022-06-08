@@ -6,3 +6,4 @@ operator
 time
 math
 os
+termcolor
