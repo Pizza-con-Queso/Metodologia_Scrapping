@@ -255,7 +255,7 @@ def DetectarLinksCientificos(sop):
     return T
 
 def main():
-    head = {'User-Agent': '5'}
+    head = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36'}
     
     page = requests.get('https://research.com/scientists-rankings/computer-science', headers=head)
 
